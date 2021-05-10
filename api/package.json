@@ -13,6 +13,8 @@
     "celebrate": "^14.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mongodb": "^3.6.6"
+    "json2csv": "^5.0.6",
+    "mongodb": "^3.6.6",
+    "nodemailer": "^6.6.0"
   }
 }

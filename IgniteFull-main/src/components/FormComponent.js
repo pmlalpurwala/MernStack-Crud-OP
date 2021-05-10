@@ -1,27 +1,57 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
-const FormComponent = () => {
+const FormComponent = ({ updObject }) => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
   const [hobbies, setHobbies] = useState();
   const [error, setError] = useState();
+  const history = useHistory();
+  useEffect(() => {
+    if (updObject) {
+      setName(updObject.name);
+      setEmail(updObject.email);
+      setPhoneNumber(updObject.phoneNumber);
+      setHobbies(updObject.hobbies);
+    }
+  }, [updObject]);
   const formsubmit = (e) => {
-    alert("form");
+    //alert("form");
     e.preventDefault();
-    axios
-      .post("http://localhost:5000/api/insert", {
-        "name": name,
-        "email": email,
-        "phoneNumber": phoneNumber,
-        "hobbies": hobbies,
-      })
-      .then((res) => console.log("Data successfully addded .."))
-      .catch((e) => console.log("error"));
+
+    if (updObject) {
+      console.log(updObject);
+      axios
+        .post("http://localhost:7000/api/update", {
+          _id: updObject._id,
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          hobbies: hobbies,
+        })
+        .then((res) => {
+          history.push("/viewtable");
+          window.location.reload(false);
+        })
+        .catch((e) => console.log("error"));
+    } else {
+      axios
+        .post("http://localhost:7000/api/insert", {
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          hobbies: hobbies,
+        })
+        .then((res) => {
+          history.push("/viewtable");
+          window.location.reload(false);
+        })
+        .catch((e) => console.log("error"));
+    }
   };
   return (
     <div>
@@ -35,7 +65,7 @@ const FormComponent = () => {
               type="text"
               id="fname"
               name="fname"
-              //  defaultValue={updateObject ? updateObject.name : ""}
+              defaultValue={updObject ? updObject.name : ""}
               onChange={(e) => {
                 setName(e.target.value);
               }}
@@ -47,7 +77,7 @@ const FormComponent = () => {
               type="email"
               id="email"
               name="email"
-              //defaultValue={updateObject ? updateObject.email : ""}
+              defaultValue={updObject ? updObject.email : ""}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -59,7 +89,7 @@ const FormComponent = () => {
               type="number"
               id="phoneNumber"
               name="pn"
-              // defaultValue={updateObject ? updateObject.phoneNumber : ""}
+              defaultValue={updObject ? updObject.phoneNumber : ""}
               onChange={(e) => {
                 setPhoneNumber(e.target.value);
               }}
@@ -71,13 +101,15 @@ const FormComponent = () => {
               type="text"
               id="hobbies"
               name="hobbies"
-              // defaultValue={updateObject ? updateObject.hobbies : ""}
+              defaultValue={updObject ? updObject.hobbies : ""}
               onChange={(e) => {
                 setHobbies(e.target.value);
               }}
             />
             <br></br>
-            <button type="submit">Insert into DataBase (Form)</button>
+            <button type="submit">
+              {updObject ? "Udpate Data" : "Insert Data"}
+            </button>
           </Form>
         </Details>
       </Card>
